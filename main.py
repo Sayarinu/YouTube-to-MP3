@@ -1,18 +1,17 @@
 import os
+import customtkinter
 
 from pytube import YouTube
 from moviepy.editor import *
 
 
-def downloadYTVideo(url, output_path):
+def downloadYTVideo(url, output_path, title):
     try:
         # Download the YouTube video
         yt = YouTube(url)
         video = yt.streams.first()
         video.download(output_path)
 
-        title = input("What do you want to title the video (Don't put .mp3 in the input):   ")
-        # Convert the video to MP3
         video_path = os.path.join(output_path, video.default_filename)
         mp3_path = os.path.join(output_path, f"{title}.mp3")
         video_clip = VideoFileClip(video_path)
@@ -31,20 +30,32 @@ def downloadYTVideo(url, output_path):
         print("An error occurred:", str(e))
 
 
-def main():
-    loop = True
-    userID = input("Please enter user ID:   ")
-    while loop:
-        URL = input("Enter in the URL:  ")
-        output_directory = f"C:/Users/{userID}/Music/Youtube Downloads"
-        downloadYTVideo(URL, output_directory)
+customtkinter.set_appearance_mode("dark")
+customtkinter.set_default_color_theme("dark-blue")
 
-        response = input("Would you like to download again? (Y/N):  ")
-        while response != "y" and response != "Y" and response != "n" and response != "N":
-            response = input("Invalid response. Would you like to download again? (Y/N):  ")
-        if response == "n" or response == "N":
-            loop = False
+root = customtkinter.CTk()
+root.geometry("600x400")
 
+root.title("YouTube to MP3")
+root.iconbitmap("Sayarin - Carter Garcia Website Icon.ico")
 
-if __name__ == "__main__":
-    main()
+frame = customtkinter.CTkFrame(master=root)
+frame.pack(pady=20, padx=60, fill="both", expand=True)
+
+label = customtkinter.CTkLabel(master=frame, text="YouTube to MP3")
+label.pack(pady=12, padx=10)
+
+entry1 = customtkinter.CTkEntry(master=frame, placeholder_text="System File Path", width=500, justify="center")
+entry1.pack(pady=12, padx=10)
+
+entry2 = customtkinter.CTkEntry(master=frame, placeholder_text="Video URL", width=500, justify="center")
+entry2.pack(pady=12, padx=10)
+
+entry3 = customtkinter.CTkEntry(master=frame, placeholder_text="MP3 Title", width=500, justify="center")
+entry3.pack(pady=12, padx=10)
+
+button = customtkinter.CTkButton(master=frame, text="Download",
+                                 command=lambda: downloadYTVideo(entry2.get(), entry1.get(), entry3.get()))
+button.pack(pady=12, padx=10)
+
+root.mainloop()
